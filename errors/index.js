@@ -1,15 +1,16 @@
 module.exports = {
     
     sendError(res, e){
+        e.code = e.code ? e.code : 500;
         res.status(e.code).json({
             err: e.name,
             msg: e.message
         })
     },
 
-    NoUser : class {
-        constructor(userId){
-            let msg = `User with ${userId} does not exist`
+    NoUser : class NoUser extends Error {
+        constructor(email){
+            let msg = `User with email ${email} does not exist`
             super(msg);
             this.name = "NoUser";
             this.message = msg;
@@ -17,9 +18,9 @@ module.exports = {
         }
     },
 
-    InvalidCredentials : class {
-        constructor(userId){
-            let msg = `User with ${userId} does not exist`
+    InvalidCredentials : class InvalidCredentials extends Error {
+        constructor(email){
+            let msg = `Wrong password for user with email ${email} does not exist`
             super(msg);
             this.name = "InvalidCredentials";
             this.message = msg;
@@ -27,9 +28,9 @@ module.exports = {
         }
     },
 
-    InvalidToken : class {
+    InvalidToken : class InvalidToken extends Error {
         constructor(){
-            let msg = `The authorization token sent is invalid`
+            let msg = `Invalid or no authorization token was sent`
             super(msg);
             this.name = "InvalidToken";
             this.message = msg;
@@ -37,7 +38,17 @@ module.exports = {
         }
     },
 
-    InternalServerError : class {
+    IncompleteData: class IncompleteData extends Error {
+        constructor(){
+            let msg = `bad request`
+            super(msg);
+            this.name = "BadRequest";
+            this.message = msg;
+            this.code = 400;
+        }
+    },
+
+    InternalServerError : class InternalServerError extends Error {
         constructor(msg){
             super(msg);
             this.name = "InternalServerError";

@@ -1,4 +1,7 @@
 class SessionMap {
+
+    #register;
+
     constructor(){
         this.#register = {};
     }

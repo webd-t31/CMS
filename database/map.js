@@ -1,6 +1,5 @@
 const connect_db = require("../database/connection");
 const errors = require("../errors");
-let entityMap = {};
 
 class Connection {
     constructor(){
@@ -59,9 +58,9 @@ class Connection {
     async updateOne(e, filters, val, upsert){
         if(!this.db) throw errors.InternalServerError("Cannot connect to database");
 
-        let parsed = Connection.parseUpdateDocument(val);
-        let res = await this.db.collection(e).findOneAndUpdate(filters, parsed.value, {
-            arrayFilters: parsed.arrayFilters,
+        // let parsed = Connection.parseUpdateDocument(val);
+        let res = await this.db.collection(e).findOneAndUpdate(filters, val.value, {
+            arrayFilters: val.arrayFilters ? val.arrayFilters : null,
             returnDocument: "after"
         });
         if(res){
@@ -88,6 +87,7 @@ class Connection {
     }
 }
 
+module.exports = Connection;
 
 //     updateOne(e, filters, newVal){
 

@@ -5,10 +5,14 @@ module.exports = function(session){
 
     return function(req, res, next){
         try {
+            if(!req.authRequired){
+                next();
+                return;
+            }
             const token = req.headers.authorization;
             let user = session.checkSession(token);
             
-            if(!user) throw errors.InvalidToken();
+            if(!user) throw new errors.InvalidToken();
 
             // check token
             req.user = user;
