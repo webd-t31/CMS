@@ -17,3 +17,6 @@ module.exports.Users = function(connection){
         isAdmin: {type: Boolean, default: false}
     }, {versionKey: false}));
 }
+
+// roles
+// admin, user

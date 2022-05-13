@@ -1,13 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const modifiers = ["public", "protected", "private"];
+const modifiers = ["public", "protected", "admin"];
 
 const apiAccessMap = require(path.join(__dirname, "..", "configs", "access.js"));
 
 module.exports.middleware = function(req, res, next){
-    let url = req.originalUrl.split("?")[0];
+    let url = `[${req.method.toLowerCase()}]${req.originalUrl.split("?")[0]}`;
+    console.log(url);
     if(apiAccessMap[url]){
-        if(apiAccessMap[url] == "private"){
+        if(apiAccessMap[url] == "admin"){
             req.authRequired = true;
             req.isAdmin = true;
         } else {

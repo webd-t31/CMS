@@ -1,6 +1,7 @@
 module.exports = {
     
     sendError(res, e){
+        console.log(e);
         e.code = e.code ? e.code : 500;
         res.status(e.code).json({
             err: e.name,
@@ -40,7 +41,7 @@ module.exports = {
 
     IncompleteData: class IncompleteData extends Error {
         constructor(){
-            let msg = `bad request`
+            let msg = `Bad request`
             super(msg);
             this.name = "BadRequest";
             this.message = msg;
@@ -54,6 +55,16 @@ module.exports = {
             this.name = "InternalServerError";
             this.message = msg;
             this.code = 500;
+        }
+    },
+
+    OnlyAdminAccess : class OnlyAdminAccess extends Error {
+        constructor(){
+            this.msg = "This is accessible by only admin role"
+            super(msg);
+            this.name = "OnlyAdminAccess";
+            this.message = msg;
+            this.code = 403;
         }
     }
 
