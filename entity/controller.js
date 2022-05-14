@@ -1,5 +1,6 @@
 const {sendError, IncompleteData} = require("../errors");
 const parseRouteSetting = require("./utils/routeSettingParser");
+const apiRouter = require("./init");
 const {MongoClient} = require("mongodb");
 let db = null;
 MongoClient.connect(process.env.MONGO_URL).then(c => {
@@ -20,6 +21,7 @@ module.exports = {
                 // parsedRouteSetting: parsedSetting
             });
             if(r.insertedId){
+                const router = apiRouter.dynamicLoad(req.app, req.body);
                 res.json({
                     success: true,
                     id: r.insertedId,

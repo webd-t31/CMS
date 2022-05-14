@@ -1,5 +1,6 @@
 const Router = require("express").Router;
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const { sendError } = require("../../errors");
 /**
  * 
  * @param {mongoose.Model} entity 
@@ -12,9 +13,6 @@ module.exports = function(entity){
                 const {user} = req;
                 // const {filter} = req.body;
                 let {skip, limit, sort} = req.query;
-                let filter = {};
-                if(user) filter = {byUser : {$in: [user._id, "any"]}}
-                else filter.byUser = "any";
                 let opts = {}
                 if(skip) opts.skip = skip;
                 if(limit) opts.limit = limit;
@@ -22,6 +20,9 @@ module.exports = function(entity){
                     let [, key, asc] = sort.match(/(\w+),([-]?1)/i) || [];
                     if(key && asc) opts.sort = sort;
                 }
+                let filter = {};
+                if(user) filter = {byUser : {$in: [user._id, "any"]}}
+                else filter.byUser = "any";
 
                 let result = await entity.find(filter, {"byUser": 0}, opts).exec();
                 
@@ -51,11 +52,45 @@ module.exports = function(entity){
             }
         },
 
-        async getbyid(req, res){},
+        async getbyid(req, res){
+            try {
+                const {user} = req;
+                const {id} = req.params;
+                let filter = {_id: mongoose.Types.ObjectId(id)};
+                if(user) filter.byUser = {$in: [user._id, "any"]}
+                else filter.byUser = "any";
+
+                let result = await entity.find(filter, {"byUser": 0}).exec();
+
+                res.json({
+                    success: !!result,
+                    data: result
+                })
+            } catch(e){
+                sendError(res, e);
+            }
+        },
 
         async updatebyid(req, res){},
 
-        async deletebyid(req, res){}
+        async deletebyid(req, res){
+            try {
+                const {user} = req;
+                const {id} = req.params;
+                let filter = {_id: mongoose.Types.ObjectId(id)};
+                if(user) filter.byUser = {$in: [user._id, "any"]}
+                else filter.byUser = "any";
+
+                let result = await entity.findOneAndDelete(filter, {projection: {"byUser": 0}}).exec();
+
+                res.json({
+                    success: !!result,
+                    data: result
+                })
+            } catch(e){
+                sendError(res, e);
+            }
+        }
     }
 
     const r = Router();

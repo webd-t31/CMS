@@ -7,7 +7,7 @@ const parseRouteSetting = require("./routeSettingParser");
 
 module.exports = function(app, name, routeSetting){
     let apiAccessMap = app.get("apiAccessMap");
-    let {parsedSetting} = parseRouteSetting(name, routeSetting);
+    let {parsedSetting} = parseRouteSetting(name, routeSetting, true);
     apiAccessMap = {...apiAccessMap, ...parsedSetting};
     app.set("apiAccessMap", apiAccessMap);
 }
