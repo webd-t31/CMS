@@ -5,5 +5,7 @@ module.exports = {
     "[get]/student": "public",
     "[post]/student": "public",
     "[post]/entity/create": "public",
-    "[get]/entity": "public"
+    "[get]/entity/detail": "public",
+    "[put]/entity/schema": "public",
+    "[get]/get-routers": "public"
 }

@@ -48,10 +48,36 @@ module.exports = {
     },
 
     async updateSchema(req, res){
-        res.json({
-            success: true,
-            msg: "pass"
-        })
+        try {
+            let {eid} = req.query;
+            let body = req.body;
+            if(!body) throw new IncompleteData();
+
+            let updateDoc = {};
+            if(body.add) {
+                updateDoc.$set = {};
+                for(let k in body.add){
+                    updateDoc.$set["schema."+k] = body.add[k];
+                }
+            }
+            if(body.remove) {
+                updateDoc.$unset = {};
+                updateDoc.$set.deletedFields = {};
+                for(let k in body.remove){
+                    updateDoc.$unset["schema."+k] = 0;
+                    updateDoc.$set.deletedFields[k] = 0;
+                }
+            }
+            let r = await db.findOneAndUpdate({eid}, updateDoc, {returnNewDocument: true});
+            if(r.ok){
+                res.json({
+                    success: true,
+                    updated: r.value
+                })
+            }
+        } catch(e){
+            sendError(res, e);
+        }
     },
 
     async updateRouteSetting(req, res){

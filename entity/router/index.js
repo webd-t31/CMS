@@ -6,7 +6,7 @@ const { sendError } = require("../../errors");
  * @param {mongoose.Model} entity 
  * @returns {Router}
  */
-module.exports = function(entity){
+module.exports = function(entity, delProj){
     let api = {
         async get(req, res){
             try {
@@ -24,7 +24,8 @@ module.exports = function(entity){
                 if(user) filter = {byUser : {$in: [user._id, "any"]}}
                 else filter.byUser = "any";
 
-                let result = await entity.find(filter, {"byUser": 0}, opts).exec();
+                let proj = {...delProj, "byUser": 0};
+                let result = await entity.find(filter, proj, opts).exec();
                 
                 res.json({
                     count: result.length,
@@ -60,7 +61,8 @@ module.exports = function(entity){
                 if(user) filter.byUser = {$in: [user._id, "any"]}
                 else filter.byUser = "any";
 
-                let result = await entity.find(filter, {"byUser": 0}).exec();
+                let proj = {...delProj, "byUser": 0};
+                let result = await entity.find(filter, delProj).exec();
 
                 res.json({
                     success: !!result,
@@ -81,7 +83,8 @@ module.exports = function(entity){
                 if(user) filter.byUser = {$in: [user._id, "any"]}
                 else filter.byUser = "any";
 
-                let result = await entity.findOneAndDelete(filter, {projection: {"byUser": 0}}).exec();
+                let proj = {...delProj, "byUser": 0}
+                let result = await entity.findOneAndDelete(filter, {projection: proj}).exec();
 
                 res.json({
                     success: !!result,

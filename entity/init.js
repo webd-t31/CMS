@@ -11,23 +11,27 @@ const updateApiAccess = require("./utils/updateApiAccess");
  * @param {express.Application} app
  * @returns {express.Router}
  */
-const dynamicLoad = async function(app, {name, schema, routeSetting}){
+const dynamicLoad = async function(app, {name, schema, routeSetting, deletedFields}){
     let conn = await mongoose.createConnection(process.env.MONGO_URL).asPromise();
     let entityModel = conn.model(name, buildSchema(schema));
-    let router = buildRouter(entityModel);
-    console.log("Dynamic Loading ... "+name)
+    let router = buildRouter(entityModel, (deletedFields || {}));
     // update api access map to keep up with access permission to apis
     updateApiAccess(app, name, routeSetting);
     app.use("/"+process.env.CONTENT_BASE+"/"+name, router);
-    // await conn.close();
-    return router;
+    // return router;
 }
 module.exports.dynamicLoad = dynamicLoad;
 module.exports.init = async function(app){
-    let conn = await mongoose.createConnection(process.env.MONGO_URL).asPromise();
-    let coll = conn.collection("entities");
-    let eData = await coll.find().toArray();
-    for(let i = 0; i < eData.length; i++){
-        dynamicLoad(app, eData[i]);
+    try {
+        let conn = await mongoose.createConnection(process.env.MONGO_URL).asPromise();
+        let coll = conn.collection("entities");
+        let eData = await coll.find().toArray();
+        for(let i = 0; i < eData.length; i++){
+            console.log("Loading entity ... "+eData[i].name);
+            dynamicLoad(app, eData[i]);
+        }
+    } catch(e){
+        console.log(e);
+        process.exit()
     }
 }

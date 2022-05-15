@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 const modifiers = ["public", "protected", "admin"];
 
@@ -7,7 +6,9 @@ const modifiers = ["public", "protected", "admin"];
 const getAccessLevel = function(map, method, url){
     let s = url.match(/([a-zA-z0-9-_]+)/gi);
     let name = s[1];
-    // console.log(map)
+    let ok = `[${method.toLowerCase()}]${url}`
+    console.log(map[ok]);
+    if(map[ok]) return map[ok];
     if(s.length >= 2 && map[name] && s[0] == process.env.CONTENT_BASE){
         console.log(map[name][method][s.length-2]);
         let access = map[name][method][s.length-2]

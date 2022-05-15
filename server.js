@@ -4,10 +4,16 @@ const app = express();
 
 app.use(express.json());
 
+app.use("/get-routers", function z(req, res){
+    console.log(req.app._router)
+    res.send("See console")
+})
+
 // api access modifier
 const modifier = require("./auth/modifiers");
 app.use(modifier.middleware);
-app.set("apiAccessMap", {});
+let starter = require("./configs/access")
+app.set("apiAccessMap", starter);
 
 // session and authentication
 const SessionMap = require("./auth/SessionMap.class");
