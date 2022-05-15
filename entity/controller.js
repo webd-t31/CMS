@@ -1,6 +1,7 @@
 const {sendError, IncompleteData} = require("../errors");
 const parseRouteSetting = require("./utils/routeSettingParser");
 const apiRouter = require("./init");
+const updateApiAccess = require("./utils/updateApiAccess");
 const {MongoClient} = require("mongodb");
 let db = null;
 MongoClient.connect(process.env.MONGO_URL).then(c => {
@@ -68,8 +69,9 @@ module.exports = {
                     updateDoc.$set.deletedFields[k] = 0;
                 }
             }
-            let r = await db.findOneAndUpdate({eid}, updateDoc, {returnNewDocument: true});
+            let r = await db.findOneAndUpdate({eid}, updateDoc, {returnDocument: "after"});
             if(r.ok){
+                apiRouter.dynamicLoad(req.app, r.value);
                 res.json({
                     success: true,
                     updated: r.value
@@ -85,13 +87,14 @@ module.exports = {
             let {eid} = req.query;
             let {routeSetting} = req.body
             if(!eid || !routeSetting) throw new IncompleteData();
-            let {routeMap} = parseRouteSetting(eid, routeSetting);
+            let {parsedSetting, routeMap} = parseRouteSetting(eid, routeSetting, true);
             let setterDoc = {$set: {}};
             for(let k in routeMap){
                 setterDoc.$set["routeSetting."+k] = routeMap[k];
             }
             let r = await db.updateOne({eid}, setterDoc);
             if(r.modifiedCount){
+                updateApiAccess(req.app, eid, parsedSetting);
                 res.json({
                     success: true,
                     data: {

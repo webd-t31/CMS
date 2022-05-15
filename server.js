@@ -2,18 +2,22 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+let routerRegister = require("./entity/router/register")
 app.use(express.json());
 
 app.use("/get-routers", function z(req, res){
-    console.log(req.app._router)
-    res.send("See console")
+    let r = 
+    req.app._router.stack.map((s, i) => {
+        return {r: s.regexp.toString(), i}
+    })
+    res.json(r);
 })
 
 // api access modifier
 const modifier = require("./auth/modifiers");
 app.use(modifier.middleware);
 let starter = require("./configs/access")
-app.set("apiAccessMap", starter);
+app.set("api-access-map", starter);
 
 // session and authentication
 const SessionMap = require("./auth/SessionMap.class");
@@ -25,8 +29,18 @@ app.set("session", session);
 app.use("/user", require("./user/routes"));
 app.use("/entity", require("./entity/routes"));
 
-// load the entity as apis
-require("./entity/init").init(app);
+// create a empty register
+app.set("route-index-register", {});
 
-const PORT = (process.env.PORT || 1131)
-app.listen(PORT, () => console.log("cms started on port 1131 ..."));
+// load the entity as apis
+// once all routers are mounted create a register for removing on updates
+// start the server then
+require("./entity/init").init(app).then(function(){
+
+    // updare the route register for routers
+    routerRegister.updateRegister(app);
+
+    const PORT = (process.env.PORT || 1131)
+    app.listen(PORT, () => console.log("cms started on port 1131 ..."));
+
+});

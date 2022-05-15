@@ -6,9 +6,8 @@ const modifiers = ["public", "protected", "admin"];
 const getAccessLevel = function(map, method, url){
     let s = url.match(/([a-zA-z0-9-_]+)/gi);
     let name = s[1];
-    let ok = `[${method.toLowerCase()}]${url}`
-    console.log(map[ok]);
-    if(map[ok]) return map[ok];
+    let oldKey = `[${method.toLowerCase()}]${url}`;
+    if(map[oldKey]) return map[oldKey];
     if(s.length >= 2 && map[name] && s[0] == process.env.CONTENT_BASE){
         console.log(map[name][method][s.length-2]);
         let access = map[name][method][s.length-2]
@@ -21,9 +20,8 @@ const getAccessLevel = function(map, method, url){
 module.exports.middleware = function(req, res, next){
     // let url = `${req.method.toLowerCase()},${req.originalUrl.split("?")[0]}`;
     let url = req.originalUrl.split("?")[0];
-    let apiAccessMap = req.app.get("apiAccessMap");
-    let accessLevel = getAccessLevel(apiAccessMap, req.method.toLowerCase(), url)
-    console.log(url, accessLevel)
+    let apiAccessMap = req.app.get("api-access-map");
+    let accessLevel = getAccessLevel(apiAccessMap, req.method.toLowerCase(), url);
     if(accessLevel){
         if(accessLevel == "admin"){
             req.authRequired = true;
