@@ -9,7 +9,7 @@ let User = connection.model("Users", schema.Users);
 let Role = connection.model("Roles", schema.Roles);
 let RoleList = {};
 
-(async function(){
+const updateRoleList = async function(){
     let roles = await Role.find({}).exec();
     roles.forEach( r => {
         let scopes = JSON.parse(JSON.stringify(r.scopes));
@@ -20,7 +20,8 @@ let RoleList = {};
             isAdmin: r.isAdmin
         }
     })
-})()
+}
+updateRoleList();
 
 const getScopes = function(roles){
     let scopes = {};
@@ -179,5 +180,34 @@ module.exports = {
         }
     },
 
+    async updateScopes(req, res){
+        try {
+            const {isAdmin} = req;
+            if(!isAdmin) throw new OnlyAdminAccess();
 
+            let {roleId, name, scopes} = req.body;
+            if(!roleId || !name || scopes.length == 0) throw new IncompleteData();
+            let _scopes = {};
+            scopes.forEach( s => {
+                let [ent, perm] = s.split(":");
+                if(!isNaN(parseInt(perm)) && parseInt(perm) < 3 && parseInt(perm) >= 0)
+                _scopes[ent] = parseInt(perm);
+            }) 
+
+            let r = await Role.updateOne({_id: mongoose.Types.ObjectId(roleId), name}, {
+                $set: {scopes: _scopes}
+            })
+            if(r.acknowledged){
+                await updateRoleList();
+                res.json({
+                    success: true,
+                    scopes: RoleList[name].scopes
+                })
+            } else {
+                res.json({success: false})
+            }
+        } catch(e){
+            sendError(res, e);
+        }
+    }
 }

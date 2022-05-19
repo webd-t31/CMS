@@ -8,5 +8,6 @@ module.exports = {
     "[put]/entity/schema": "public",
     "[get]/get-routers": "public",
     "[post]/admin/roles": "admin",
-    "[get]/admin/roles": "admin"
+    "[get]/admin/roles": "admin",
+    "[post]/admin/roles/scopes": "admin"
 }
