@@ -60,9 +60,19 @@ module.exports = {
 
     OnlyAdminAccess : class OnlyAdminAccess extends Error {
         constructor(){
-            this.msg = "This is accessible by only admin role"
+            let msg = "This is accessible by only admin role"
             super(msg);
             this.name = "OnlyAdminAccess";
+            this.message = msg;
+            this.code = 403;
+        }
+    },
+
+    PermissionDenied : class Permission extends Error {
+        constructor(){
+            let msg = "User does not have required permission"
+            super(msg);
+            this.name = "PrermissionDenied";
             this.message = msg;
             this.code = 403;
         }

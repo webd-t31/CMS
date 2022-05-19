@@ -3,7 +3,16 @@ class SessionMap {
     #register;
 
     constructor(){
-        this.#register = {};
+        this.#register = {
+            "admin-test": {
+                "id": "627c0780ba7112bd0c6c6994",
+                "email": "toshit.work@gmail.com",
+                "roles": [
+                    "admin"
+                ],
+                "ts": 1652779356566
+            }
+        };
     }
 
     addSession(token, userData){

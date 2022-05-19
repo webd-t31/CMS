@@ -1,11 +1,12 @@
 module.exports = {
-    "[post]/user/new": "public",
-    "[post]/user/access-token": "public",
-    "[get]/user/get-detail": "protected",
-    "[get]/student": "public",
-    "[post]/student": "public",
+    "[post]/admin/user/new": "admin",
+    "[post]/user/authorize": "public",
+    "[get]/user/me": "protected",
+    "[post]/admin/user/assign": "admin",
     "[post]/entity/create": "public",
     "[get]/entity/detail": "public",
     "[put]/entity/schema": "public",
-    "[get]/get-routers": "public"
+    "[get]/get-routers": "public",
+    "[post]/admin/roles": "admin",
+    "[get]/admin/roles": "admin"
 }

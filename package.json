@@ -1,12 +1,15 @@
 {
   "name": "cms",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "CMS Backend",
+  "main": "./bin/index",
   "scripts": {
     "test": "PORT=4000 node server.js"
   },
-  "author": "Toshit",
+  "bin": {
+    "cms": "./bin/index.js"
+  },
+  "author": "Toshit Mall",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.0",

@@ -26,7 +26,10 @@ const Auth = require("./auth");
 app.use(Auth(session));
 app.set("session", session);
 
-app.use("/user", require("./user/routes"));
+
+let {userRouter, adminRouter} = require("./user/routes");
+app.use("/user", userRouter);
+app.use("/admin", adminRouter);
 app.use("/entity", require("./entity/routes"));
 
 // create a empty register
@@ -35,12 +38,16 @@ app.set("route-index-register", {});
 // load the entity as apis
 // once all routers are mounted create a register for removing on updates
 // start the server then
-require("./entity/init").init(app).then(function(){
+function start(){
+    require("./entity/init").init(app).then(function(){
 
-    // updare the route register for routers
-    routerRegister.updateRegister(app);
+        // updare the route register for routers
+        routerRegister.updateRegister(app);
+    
+        const PORT = (process.env.PORT || 1131)
+        app.listen(PORT, () => console.log(`cms started on port ${PORT} ...`));
+    
+    });
+}
 
-    const PORT = (process.env.PORT || 1131)
-    app.listen(PORT, () => console.log("cms started on port 1131 ..."));
-
-});
+module.exports.start = start;

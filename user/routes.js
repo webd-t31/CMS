@@ -1,8 +1,20 @@
-const r = require("express").Router();
+const adminRouter = require("express").Router();
+const userRouter = require("express").Router();
 const handlers = require("./controller");
 
-r.post("/new", handlers.createUser);
-r.post("/access-token", handlers.getAccessToken);
-r.get("/get-detail", handlers.getDetails)
 
-module.exports = r;
+// admin router
+adminRouter.post("/roles", handlers.createRoles);
+adminRouter.post("/user/new", handlers.createUser);
+adminRouter.post("/user/assign", handlers.editUserRoles);
+adminRouter.get("/roles", handlers.getRoles);
+
+// user router common to admin router
+userRouter.post("/authorize", handlers.getAccessToken);
+userRouter.get("/me", handlers.getDetails);
+
+
+// r.post("/roles/scopes", handlers.updateScope);
+// r.get("/roles/scopes", handlers.getScope);
+
+module.exports = {adminRouter, userRouter};
