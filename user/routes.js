@@ -14,7 +14,4 @@ adminRouter.post("/roles/scopes", handlers.updateScopes);
 userRouter.post("/authorize", handlers.getAccessToken);
 userRouter.get("/me", handlers.getDetails);
 
-
-// r.get("/roles/:id/scopes/", handlers.getScope);
-
 module.exports = {adminRouter, userRouter};
