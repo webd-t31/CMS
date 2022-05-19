@@ -24,13 +24,12 @@ module.exports = function(session){
             let {method, originalUrl} = req;
             let methodPerm = {post: 2, get: 1};
             let urlParams = originalUrl.split("/");
-            let entity = urlParams[1];
-            if(urlParams[0] !== "content") {
+            let entity = urlParams[2];
+            if(urlParams[1] !== "content") {
                 next();
                 return;
             }
-            console.log(req.user[entity], method[methodPerm])
-            if(req.user[entity] >= methodPerm[method]){
+            if(req.user.scopes[entity] >= methodPerm[method.toLowerCase()]){
                 next()
             } else throw new errors.PermissionDenied();
 

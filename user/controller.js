@@ -20,7 +20,6 @@ let RoleList = {};
             isAdmin: r.isAdmin
         }
     })
-    console.log(RoleList);
 })()
 
 const getScopes = function(roles){
