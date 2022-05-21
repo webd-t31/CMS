@@ -39,6 +39,14 @@ app.set("route-index-register", {});
 // once all routers are mounted create a register for removing on updates
 // start the server then
 function start(){
+    process.env.CONTENT_BASE = !!process.env.CONTENT_BASE ? process.env.CONTENT_BASE : "api";
+    
+    let {MONGO_URL, SECRET, DB_NAME} = process.env;
+    if(!MONGO_URL || !SECRET || !DB_NAME) {
+        console.log("environment variables missing or not defined in .env file");
+        process.exit();
+    }
+    
     require("./entity/init").init(app).then(function(){
 
         // updare the route register for routers
