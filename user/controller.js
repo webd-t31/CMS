@@ -41,6 +41,9 @@ module.exports = {
             if(user){
                 throw new NoUser(req.email);
             }
+            if(!(req.body.roles && req.body.roles.every( r => !!RoleList[r]))) {
+                throw new IncompleteData();
+            }
             user = new User(req.body);
             user.password = crypto.createHash("sha256").update(user.password).digest("hex");
             await user.save();
