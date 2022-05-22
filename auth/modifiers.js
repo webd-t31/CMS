@@ -9,7 +9,6 @@ const getAccessLevel = function(map, method, url){
     let oldKey = `[${method.toLowerCase()}]${url}`;
     if(map[oldKey]) return map[oldKey];
     if(s.length >= 2 && map[name] && s[0] == process.env.CONTENT_BASE){
-        console.log(map[name][method][s.length-2]);
         let access = map[name][method][s.length-2]
         if(access) {
             return access;

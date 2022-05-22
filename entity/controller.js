@@ -1,7 +1,7 @@
 const {sendError, IncompleteData} = require("../errors");
 const parseRouteSetting = require("./utils/routeSettingParser");
-const apiRouter = require("./init");
 const updateApiAccess = require("./utils/updateApiAccess");
+const apiRouter = require("./init");
 const {MongoClient} = require("mongodb");
 let db = null;
 MongoClient.connect(process.env.MONGO_URL).then(c => {

@@ -1,6 +1,7 @@
 const Router = require("express").Router;
 const mongoose = require("mongoose");
 const { sendError } = require("../../errors");
+const parseUpdateDocument = require("../utils/parseUpdateDocument");
 /**
  * 
  * @param {mongoose.Model} entity 
@@ -62,7 +63,7 @@ module.exports = function(entity, delProj){
                 else filter.byUser = "any";
 
                 let proj = {...delProj, "byUser": 0};
-                let result = await entity.find(filter, delProj).exec();
+                let result = await entity.find(filter, proj).exec();
 
                 res.json({
                     success: !!result,
@@ -73,7 +74,31 @@ module.exports = function(entity, delProj){
             }
         },
 
-        async updatebyid(req, res){},
+        async updatebyid(req, res){
+            try {
+                const {user} = req;
+                const {id} = req.params;
+                const upsert = !!req.query.upsert;
+                let filter = {_id: mongoose.Types.ObjectId(id)};
+                if(user) filter.byUser = {$in: [user._id, "any"]}
+                else filter.byUser = "any";
+
+                let updateDoc = parseUpdateDocument(req.body);
+                let result = await entity.updateOne(filter, updateDoc.value, {upsert, arrayFilters: updateDoc.arrayFilters || {}}).exec();
+
+                if(result.acknowledged){
+                    res.json({
+                        success: true
+                    })
+                } else {
+                    res.json({
+                        success: false
+                    })
+                }
+            } catch(e){
+                sendError(res, e)
+            }
+        },
 
         async deletebyid(req, res){
             try {

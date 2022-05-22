@@ -20,6 +20,12 @@ module.exports = function(session){
             // check token
             req.user = user;
             
+            // pass scope checking if role includes admin
+            if(user.roles.includes("admin")){
+                next();
+                return;
+            }
+
             // check if the user has access to the requested api
             let {method, originalUrl} = req;
             let methodPerm = {post: 2, get: 1};
