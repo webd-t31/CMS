@@ -1,3 +1,5 @@
+const errors = require("../../errors");
+
 function parseUpdateDocument(updoc){
     let pdoc = {
         value: {},
@@ -11,7 +13,7 @@ function parseUpdateDocument(updoc){
         // iterate for each array field
         Object.keys(updoc.arrays).forEach( arr_field => {
 
-            if(Object.keys(updoc.arrays[arr_field]).length > 1) throw new Error("conflict")
+            if(Object.keys(updoc.arrays[arr_field]).length > 1) throw new errors.UpdateConflict();
 
             // iterate for update actions in each array
             if(updoc.arrays[arr_field].update) updoc.arrays[arr_field].update.forEach( v => {

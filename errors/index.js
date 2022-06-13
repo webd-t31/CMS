@@ -76,6 +76,16 @@ module.exports = {
             this.message = msg;
             this.code = 403;
         }
+    },
+
+    UpdateConflict : class UpdateConflict extends Error {
+        constructor(){
+            let msg = "Only one from update, add or remove action can be performed on array at a particular time"
+            super(msg);
+            this.name = "DatabaseConflict";
+            this.message = msg;
+            this.code = 500;
+        }
     }
 
 }

@@ -5,19 +5,23 @@ const app = express();
 let routerRegister = require("./entity/router/register")
 app.use(express.json());
 
-app.use("/get-routers", function z(req, res){
-    let r = 
-    req.app._router.stack.map((s, i) => {
-        return {r: s.regexp.toString(), i}
-    })
-    res.json(r);
-})
-
 // api access modifier
 const modifier = require("./auth/modifiers");
 app.use(modifier.middleware);
-let starter = require("./configs/access")
-app.set("api-access-map", starter);
+let configAddresses = {
+    "[post]/admin/user/new": "admin",
+    "[post]/user/authorize": "public",
+    "[get]/user/me": "protected",
+    "[post]/admin/user/assign": "admin",
+    "[post]/entity/create": "public",
+    "[get]/entity/detail": "public",
+    "[put]/entity/schema": "public",
+    "[get]/get-routers": "public",
+    "[post]/admin/roles": "admin",
+    "[get]/admin/roles": "admin",
+    "[post]/admin/roles/scopes": "admin"
+}
+app.set("api-access-map", configAddresses);
 
 // session and authentication
 const SessionMap = require("./auth/SessionMap.class");
